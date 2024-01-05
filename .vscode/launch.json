@@ -1,0 +1,23 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: 当前文件",
+            "type": "python",
+            "request": "launch",
+            "program": "/home/hfc/miniconda3/envs/hfc38/lib/python3.8/site-packages/torch/distributed/run.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--standalone",
+                "--nproc_per_node=1",
+                "ddp_main_torchrun.py",
+                "--gpu",
+                "0"
+            ]
+        }
+    ]
+}

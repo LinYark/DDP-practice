@@ -471,6 +471,10 @@ if __name__ == '__main__':
 
 ```bash
 torchrun --standalone --nproc_per_node=2 ddp_main_torchrun.py --gpu 0,1
+torchrun --nproc_per_node=2 ddp_main_torchrun.py --gpu 0,1 
+torchrun --nproc_per_node=2 --master_port=29500 ddp_main_torchrun.py --gpu 0,1
+torchrun --nproc_per_node=2 --nnodes=3 --node_rank=0 --master_addr=192.168.56.1 --master_port=29500 ddp_main_torchrun.py --gpu 0,1
+torchrun --nproc_per_node=1 ddp_main_torchrun.py --gpu 0
 ```
 
 其中，`nproc_per_node`表示进程数，将其设置为使用的GPU数量即可。
@@ -493,3 +497,24 @@ torchrun --standalone --nproc_per_node=2 ddp_main_torchrun.py --gpu 0,1
 多个线程大致相当于增大了相应倍数的`batch_size`，最好相应地调一调`batch_size`和学习率。本文没有进行调节，导致测试获得的准确率有一些差别。
 
 模型较小时速度差别不大，反而DDP与混合精度可能因为一些初始化和精度转换耗费额外时间而更慢。在模型较大时，DDP + 混合精度的速度要明显高于常规，且能降低显存占用。
+
+## 多机多卡
+exmaple: 2 node, 8 GPUs per node (16GPUs)
+需要在两台机器上分别运行脚本
+注意细节：node_rank master 为 0 
+机器1
+>>> python -m torch.distributed.launch \
+    --nproc_per_node=8 \
+    --nnodes=2 \
+    --node_rank=0 \
+    --master_addr="master的ip" \
+    --master_port=xxxxx \
+    YourScript.py 
+机器2
+>>> python -m torch.distributed.launch \
+    --nproc_per_node=8 \
+    --nnodes=2 \
+    --node_rank=1 \
+    --master_addr="master的ip" \
+    --master_port=xxxxx \
+    YourScript.py 
